@@ -30,15 +30,15 @@ Before you begin, ensure you have the following installed on your local developm
    
    - On macOS/Linux:
      ```
-     export DATABASE_URL='your_heroku_postgres_url'
+     export DATABASE_URL_SURVEYDONKEY='your_heroku_postgres_url'
      ```
    - On Windows CMD:
      ```
-     set DATABASE_URL=your_heroku_postgres_url
+     set DATABASE_URL_SURVEYDONKEY=your_heroku_postgres_url
      ```
    - On Windows PowerShell:
      ```
-     $env:DATABASE_URL="your_heroku_postgres_url"
+     $env:DATABASE_URL_SURVEYDONKEY="your_heroku_postgres_url"
      ```
 
    **Note:** Replace `your_heroku_postgres_url` with the actual database URL.
