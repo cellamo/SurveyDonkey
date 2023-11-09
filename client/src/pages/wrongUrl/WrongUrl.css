@@ -1,0 +1,20 @@
+#wrong-url-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 40px;
+  height: 40vh;
+  padding: 0 10%;
+}
+
+#wrong-url-button {
+  font-size: 1.2rem;
+  border: 1px solid rgba(0, 0, 0, 0.563);
+  border-radius: 10px;
+  padding: 16px;
+  transition: scale 0.15s ease-in-out;
+}
+#wrong-url-button:hover {
+  scale: 1.05;
+}
