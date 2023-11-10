@@ -8,6 +8,7 @@ from django.contrib.auth.hashers import make_password
 
 from django.utils.crypto import get_random_string
 from django.core.exceptions import ValidationError
+import uuid
 
 
 def get_expiration_date():
@@ -18,6 +19,16 @@ def get_expiration_date():
         datetime: The current time plus 24 hours.
     """
     return timezone.now() + timedelta(hours=24)
+
+def get_expiration_date_week():
+    """
+    Return the current time plus 1 week.
+    
+    Returns:
+        datetime: The current time plus 1 week.
+    
+    """
+    return timezone.now() + timedelta(days=7)
 
 def get_current_time():
     """
@@ -55,6 +66,31 @@ class CustomUserManager(BaseUserManager):
             user.set_unusable_password()
         user.save(using=self._db)
         return user
+    
+    def create_login_token(self, email):
+        """
+        Creates a unique login token for a user.
+
+        Args:
+            email (str): The email of the user.
+
+        Raises:
+            ValueError: If no user with the given email exists.
+
+        Returns:
+            str: The login token.
+        """
+        try:
+            user = self.get(email=email)
+            token = uuid.uuid4()
+            expiration_date = get_expiration_date_week()
+            # Save the token and expiration date in the user model
+            user.login_token = str(token)
+            user.login_token_expiration = expiration_date
+            user.save()
+            return str(token)
+        except self.model.DoesNotExist:
+            raise ValueError('User with given email does not exist')
 
     def create_superuser(self, email, password=None, **extra_fields):
         """
@@ -89,6 +125,9 @@ class User(AbstractUser):
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
+    login_token = models.CharField(max_length=255, blank=True, null=True)
+    login_token_expiration = models.DateTimeField(null=True, blank=True)
+
 
     objects = CustomUserManager()
 
@@ -257,7 +296,7 @@ class Invitation(models.Model):
     sent_date = models.DateTimeField(default=timezone.now)
 
     def save(self, *args, **kwargs):
-       """
+        """
         Overrides the default save method to generate a unique code if one is not provided.
 
         Args:
@@ -279,7 +318,8 @@ class Invitation(models.Model):
                     break
             else:
                 raise Exception("Failed to generate a unique code.")
-        super().save(*args, **kwargs)
+                
+            super().save(*args, **kwargs)
 
     def __str__(self):
         """
