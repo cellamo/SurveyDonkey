@@ -8,3 +8,4 @@ env/
 __pycache__/
 *.py[cod]
 *$py.class
+survey_donkey/survey/migrations/0003_user_login_token_user_login_token_expiration.py

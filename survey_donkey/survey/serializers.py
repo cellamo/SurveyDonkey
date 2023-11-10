@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import User, Survey, Question, Choice, Answer, Invitation
+from django.contrib.auth import authenticate
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,11 +24,10 @@ class ChoiceSerializer(serializers.ModelSerializer):
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        # Replace '...' with the actual fields of the Answer model
-        fields = ['...']
+        fields = ['id', 'question', 'text', 'selected_choice']
 
 class InvitationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Invitation
-        # Replace '...' with the actual fields of the Invitation model
-        fields = ['...']
+        fields = ['id', 'survey', 'email', 'code', 'expiration_date', 'sent_date']
+        
