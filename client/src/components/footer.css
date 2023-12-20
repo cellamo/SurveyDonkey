@@ -1,0 +1,37 @@
+.footer-main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 100%;
+}
+.footer-line{
+    height: 5%;
+    width: 100%;
+}
+.footer-text{
+    color: gray !important;
+    height: 80%;
+    font-size: 60%;
+}
+.footer-logo{
+    background-color: red;
+    height: 80%;
+}
+.logo-img{
+    height: 100%;
+    width: 100%
+}
+/* .x-text{
+        font-size: 5px;
+
+} */
+.line{
+        background: #EFF2F6;
+        margin: auto;
+        width: 80%;
+        height: 100%;
+        border: none;
+}
+
