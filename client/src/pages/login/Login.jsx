@@ -1,22 +1,20 @@
 import React from "react";
 import { useState } from "react";
-import { InputText } from 'primereact/inputtext';
-import { Button } from 'primereact/button';
-import { Message } from 'primereact/message';
-import "./login.css";
-import logo from "./../../assets/logo.png"
-import "primereact/resources/themes/lara-light-indigo/theme.css";  //theme
-import "primereact/resources/primereact.min.css";                  //core css
+import { InputText } from "primereact/inputtext";
+import { Button } from "primereact/button";
+import { Message } from "primereact/message";
+import "./Login.css";
+import logo from "./../../assets/logo.png";
+import "primereact/resources/themes/lara-light-indigo/theme.css"; //theme
+import "primereact/resources/primereact.min.css"; //core css
 import "primeicons/primeicons.css";
-import 'primeicons/primeicons.css';
-import Footer from "../../components/footer";
+import "primeicons/primeicons.css";
+import Footer from "../../components/footer/Footer";
 import { useNavigate } from "react-router-dom";
 
-
 export const Login = () => {
-
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState("");
   const [isValid, setIsValid] = useState(true);
 
   const validateEmail = (input) => {
@@ -34,18 +32,17 @@ export const Login = () => {
     e.preventDefault();
     if (!validateEmail(email)) {
       setIsValid(false);
-      return
-    }
-    else {
+      return;
+    } else {
       setIsValid(true);
       //TODOOO
-      console.log('Oldu');
+      console.log("Oldu");
     }
   };
 
   return (
     <div className="main-div">
-      <div className="login-div" >
+      <div className="login-div">
         <div className="login-sec-div">
           <div className="logo-div">
             <img className="logo-img" src={logo} alt="logo" />
@@ -59,29 +56,46 @@ export const Login = () => {
               onChange={handleInputChange}
             />
             <div className="p-error">
-              {!isValid && (
-                <small >Please enter a valid email address</small>
-              )}
+              {!isValid && <small>Please enter a valid email address</small>}
             </div>
           </div>
           <div className="buttons-div">
-            <button onClick={() => navigate("/")} className="back-button">Go Back</button>
-            <button onClick={handleSubmit} className="sign-in-button">Login</button>
+            <button onClick={() => navigate("/")} className="back-button">
+              Go Back
+            </button>
+            <button onClick={handleSubmit} className="sign-in-button">
+              Login
+            </button>
           </div>
 
           <div className="socials">
             <div id="social">
-              <a id="a" href="https://www.instagram.com/"><i className="pi pi-instagram" style={{ color: 'black', fontSize: "100%" }} alt="Instagram" />
+              <a id="a" href="https://www.instagram.com/">
+                <i
+                  className="pi pi-instagram"
+                  style={{ color: "black", fontSize: "100%" }}
+                  alt="Instagram"
+                />
                 <span id="s">Follow us on Instagram!</span>
               </a>
             </div>
             <div id="social">
-              <a id="a" href="https://www.facebook.com/"><i className="pi pi-facebook" style={{ color: 'black', fontSize: "100%" }} alt="Facebook" />
+              <a id="a" href="https://www.facebook.com/">
+                <i
+                  className="pi pi-facebook"
+                  style={{ color: "black", fontSize: "100%" }}
+                  alt="Facebook"
+                />
                 <span id="s">Follow us on Facebook!</span>
               </a>
             </div>
             <div id="social">
-              <a id="a" href="https://twitter.com/"><i className="pi pi-twitter" style={{ color: 'black', fontSize: "100%" }} alt="Twitter" />
+              <a id="a" href="https://twitter.com/">
+                <i
+                  className="pi pi-twitter"
+                  style={{ color: "black", fontSize: "100%" }}
+                  alt="Twitter"
+                />
                 <span id="s">Follow us on Twitter!</span>
               </a>
             </div>
@@ -91,7 +105,6 @@ export const Login = () => {
       <div className="footer-div">
         <Footer />
       </div>
-
     </div>
   );
 };

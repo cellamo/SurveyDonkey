@@ -1,4 +1,8 @@
-#wrong-url-container {
+#wrong-url-container > :nth-child(2) {
+  flex: 1;
+}
+
+#wrong-url-content {
   display: flex;
   justify-content: center;
   align-items: center;
