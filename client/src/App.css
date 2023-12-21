@@ -1,6 +1,3 @@
-#homepage-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 10vh;
+#app-container > :nth-child(2) {
+  flex: 1;
 }
