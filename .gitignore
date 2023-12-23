@@ -10,3 +10,6 @@ __pycache__/
 *.py[cod]
 *$py.class
 survey_donkey/survey/migrations/0003_user_login_token_user_login_token_expiration.py
+survey_donkey/survey_donkey/__pycache__/__init__.cpython-311.pyc
+survey_donkey/survey_donkey/__pycache__/settings.cpython-311.pyc
+survey_donkey/survey_donkey/__pycache__/urls.cpython-311.pyc
