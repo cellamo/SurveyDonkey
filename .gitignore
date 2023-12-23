@@ -3,6 +3,7 @@
 
 # Python virtual environments
 env/
+env/lib/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
