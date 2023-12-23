@@ -8,6 +8,8 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.conf import settings
 from django.utils import timezone
+from sendgrid import SendGridAPIClient
+from sendgrid.helpers.mail import Mail
 
 from .models import Survey, User
 from .serializers import SurveySerializer
@@ -49,16 +51,27 @@ class UserRegistrationView(APIView):
 
         # Construct the verification URL
         verification_url = f"http://frontend-url.com/verify/{token}"  
+        
+        message = Mail(
+        from_email='surveydonkey@arslan.wtf',
+        to_emails=email,)
+            
+        message.dynamic_template_data = {
+            'verification_url': verification_url
+        }
 
-        # Send the email
-        send_mail(
-            subject='Complete Your Registration',
-            message=f'Please click on the link to complete your registration: {verification_url}',
-            from_email=settings.EMAIL_HOST_USER,
-            recipient_list=[email],
-            fail_silently=False,
-        )
+        message.template_id = "d-7df7ce653b9e4785b3b7e64a15d3ea34"
+        
+        try:
+            sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+            response = sg.send(message)
+            print(response.status_code)
+            print(response.body)
+            print(response.headers)
+        except Exception as e:
+            print(str(e))
 
+        
         return Response({"message": "Registration email sent. Check your inbox."}, status=status.HTTP_200_OK)
     
 class UserLoginView(APIView):
@@ -71,15 +84,26 @@ class UserLoginView(APIView):
             user = User.objects.get(email=email)
             token = User.objects.create_login_token(email)
 
-            login_url = f"http://frontend-url.com/login/{token}"  # Replace with your frontend URL
+            login_url = f"http://frontend-url.com/login/{token}"  # Replace with frontend URL
 
-            send_mail(
-                subject='Your Login Link',
-                message=f'Please use this link to login: {login_url}',
-                from_email=settings.EMAIL_HOST_USER,
-                recipient_list=[email],
-                fail_silently=False,
-            )
+            message = Mail(
+            from_email='surveydonkey@arslan.wtf',
+            to_emails=email,)
+            
+            message.dynamic_template_data = {
+                'login_url': login_url
+            }
+
+            message.template_id = "d-9bb7bf40306543b49a7a397ae73eaaa5"
+        
+            try:
+                sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+                response = sg.send(message)
+                print(response.status_code)
+                print(response.body)
+                print(response.headers)
+            except Exception as e:
+                print(str(e))
 
             return Response({"message": "Login email sent. Check your inbox."}, status=status.HTTP_200_OK)
         except User.DoesNotExist:

@@ -82,3 +82,4 @@ Before you begin, ensure you have the following installed on your local developm
 
 - Do **not** commit any secret keys, the `DATABASE_URL`, or `node_modules` to the git repository.
 - Ensure you are using a virtual environment for Python and the correct node version for JavaScript dependencies to avoid conflicts with other projects or system packages.
+- Add sendgrid api key os env
