@@ -311,16 +311,29 @@ class Invitation(models.Model):
         """
         if not self.code:
             # Ensure the code is unique
-            for _ in range(100):  # Limit to 100 attempts
-                new_code = get_random_string(20)
-                if not Invitation.objects.filter(code=new_code).exists():
-                    self.code = new_code
-                    break
-            else:
-                raise Exception("Failed to generate a unique code.")
-                
-            super().save(*args, **kwargs)
+            self.code = self.generate_unique_code()
+            self.expiration_date = get_expiration_date()
+            
+        super().save(*args, **kwargs)
 
+
+    def generate_unique_code(self):
+        """
+        Generates a unique code for the invitation.
+
+        Raises:
+            Exception: If a unique code cannot be generated after 100 attempts.
+
+        Returns:
+            str: The unique code.
+        """
+        for _ in range(100):
+            new_code = get_random_string(length=20)
+            if not Invitation.objects.filter(code=new_code).exists():
+                return new_code
+            
+        raise Exception("Could not generate a unique code for the invitation")
+    
     def __str__(self):
         """
         Returns a string representation of the Invitation object in the following format:
@@ -330,3 +343,4 @@ class Invitation(models.Model):
             str: A string representation of the Invitation object.
         """
         return f"Invitation to {self.email} for survey {self.survey.title}"
+    
