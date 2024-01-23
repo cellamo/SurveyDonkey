@@ -55,6 +55,10 @@
   margin-bottom: 7%;
 }
 
+.logo-img {
+  height: 100%;
+}
+
 #email {
   height: 100%;
   width: 50%;
