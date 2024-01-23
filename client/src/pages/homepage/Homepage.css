@@ -1,11 +1,214 @@
 #homepage-content {
-  padding: 60px 90px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 80px;
+}
+#homepage-content > div {
+  width: 70%;
+  max-width: 1000px;
+}
+#welcome {
+  display: flex;
+  gap: -0px;
+  width: 60%;
+  height: 40vh;
 }
 
-h1 {
-  font-size: 2.6rem;
+#welcome-left-side {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 25px;
+  width: 50%;
 }
 
-p {
+#welcome-left-buttons {
+  display: flex;
+  justify-content: start;
+  align-items: center;
+  gap: 20px;
+}
+
+#call-to-action {
+  background-color: rgb(70, 70, 70);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-weight: 800;
+}
+#call-to-action:hover {
+  opacity: 0.8;
+}
+
+#learn-more {
+  border: 1.5px solid rgb(70, 70, 70);
+  border-radius: 20px;
+  color: rgb(70, 70, 70);
+  padding: 10px 20px;
+  font-weight: 800;
+}
+#learn-more:hover {
+  opacity: 0.5;
+}
+
+#welcome-image {
+  width: 90%;
+  margin-left: -10px;
+}
+
+.homepage-section-splitter {
+  height: 1.8px;
+  margin: 60px 0;
+}
+.homepage-section-splitter > .line {
+  opacity: 0.15;
+  background-image: linear-gradient(
+    to right,
+    white 0%,
+    #8b8b8b 15%,
+    #8b8b8b 85%,
+    white 100%
+  );
+  width: 100%;
+}
+#homepage-explanation {
+  display: flex;
+  justify-content: center;
+}
+#homepage-explanation-text {
+  width: 80%;
+}
+
+#how-this-works {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  gap: 24px;
+}
+
+#how-this-works-steps {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 20px;
+}
+
+.how-this-works-step-div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 16px;
+  height: 210px;
+}
+
+.step-circle {
+  border-radius: 50%;
+  padding: 16px;
+  font-size: 1.2rem;
+  font-weight: 600;
+  background-color: var(--bluegray-100);
+  color: var(--bluegray-600);
+}
+
+.step-header {
+  font-size: 1.25rem;
+}
+.step-explanation {
+  text-align: center;
+}
+
+#advantages {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+}
+
+#benefits-div {
+  display: flex;
+  margin-top: 24px;
+  gap: 40px;
+}
+
+.benefit-div {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: start;
+  align-items: center;
+  gap: 20px;
+  height: 210px;
+}
+
+.benefit-icon {
+  font-size: 2rem;
+}
+
+.benefit-explanation {
+  text-align: center;
+}
+
+#contact-us {
+  display: flex;
+  justify-content: center;
+  padding-bottom: 40px;
+  gap: 40px;
+}
+
+#contact-us-addresses {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+#contact-div {
+  margin-top: 60px;
+}
+
+.contact-address-header {
   font-size: 1rem;
+  margin-bottom: 16px;
+  margin-top: 48px;
+}
+
+.contact-address {
+  width: 40%;
+}
+
+.contact-content {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.contact-content-icon {
+  font-size: 0.9rem;
+  padding: 10px;
+  border-radius: 50%;
+
+  color: var(--bluegray-400);
+  background-color: var(--bluegray-100);
+}
+
+.contact-content-info {
+  opacity: 0.6;
+  display: flex;
+  align-items: center;
+}
+
+#contact-us-location-div {
+  width: 30vw;
+  height: 30vw;
+  max-width: 450px;
+  max-height: 450px;
+}
+
+.location-google-maps-iframe {
+  border: 0;
+  border-radius: 2%;
 }
