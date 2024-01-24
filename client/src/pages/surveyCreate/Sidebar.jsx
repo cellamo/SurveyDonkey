@@ -57,7 +57,7 @@ export default function Sidebar(props) {
   const { fieldsRegKey } = props;
 
   return (
-    <div key={fieldsRegKey} className="sidebar">
+    <div key={fieldsRegKey} className="survey-create-sidebar">
       {fields.map((f) => (
         <DraggableSidebarField key={f.type} field={f} />
       ))}

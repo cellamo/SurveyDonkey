@@ -162,9 +162,9 @@ function createSpacer({ id }) {
   const { fields } = data;
 
   return (
-    <div className="app">
+    <div className="survey-create">
       <Header/>
-      <div className="content">
+      <div className="survey-create-content">
         <DndContext
           onDragStart={handleDragStart}
           onDragOver={handleDragOver}

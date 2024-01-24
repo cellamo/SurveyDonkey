@@ -87,7 +87,7 @@ export default function Canvas(props) {
   return (
     <div
       ref={setNodeRef}
-      className="canvas"
+      className="survey-create-canvas"
       style={style}
       {...attributes}
       {...listeners}
