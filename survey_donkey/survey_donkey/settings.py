@@ -46,6 +46,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework.authentication.TokenAuthentication',
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
     ],
 }
 
@@ -85,7 +86,7 @@ WSGI_APPLICATION = 'survey_donkey.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.config(
-        default=os.environ.get('DATABASE_URL_SURVEYDONKEY')
+        default='postgres://qebcwalbecelww:471ee6a07ec1dce2f10e6c7fd329c373244db7219b414a6fcccc5617ac462ce5@ec2-54-195-228-159.eu-west-1.compute.amazonaws.com:5432/dvjoakdou40jr'
     )
 }
 
@@ -133,4 +134,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'survey.User'
 
-SENDGRID_API_KEY = os.environ.get('SENDGRID_API_KEY')
+SENDGRID_API_KEY = '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'

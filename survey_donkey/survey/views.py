@@ -12,6 +12,7 @@ from sendgrid import SendGridAPIClient
 from sendgrid.helpers.mail import Mail
 from django.shortcuts import get_object_or_404
 
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import Survey, User, Question, Answer, Invitation
 from .serializers import SurveySerializer
@@ -116,20 +117,26 @@ class TokenVerificationView(APIView):
         try:
             user = User.objects.get(login_token=token, login_token_expiration__gt=get_current_time())
             # Token is valid, so perform the required action (register or log in the user)
-            # We can create a session or a JWT token here for the user
 
             # Optionally, clear the token after use
             user.login_token = None
             user.login_token_expiration = None
             user.save()
 
-            return Response({"message": "Token verified successfully"}, status=status.HTTP_200_OK)
+            # Generate JWT token
+            refresh = RefreshToken.for_user(user)
+
+            return Response({
+                "refresh": str(refresh),
+                "access": str(refresh.access_token),
+                "message": "Token verified successfully"
+            }, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({"error": "Invalid or expired token"}, status=status.HTTP_400_BAD_REQUEST)
         
 def get_current_time():
     return timezone.now()
-        
+
 class AnswerSurveyView(APIView):
     def get(self, request, survey_id, token):
         try:
@@ -151,7 +158,7 @@ class AnswerSurveyView(APIView):
             return Response({"error": "Survey does not exist"}, status=status.HTTP_404_NOT_FOUND)
         except Invitation.DoesNotExist:
             return Response({"error": "Invalid token"}, status=status.HTTP_400_BAD_REQUEST)
-    
+
 
 class SendInvitations(APIView):
     permission_classes = [IsAuthenticated]
@@ -193,3 +200,8 @@ class SendInvitations(APIView):
                 
         return Response({"message": "Invitations sent"}, status=status.HTTP_200_OK)
             
+class ProtectedView(APIView):
+    permission_classes = [IsAuthenticated]
+    
+    def get(self, request):
+        return Response({"message": "You are authenticated"}, status=status.HTTP_200_OK)
