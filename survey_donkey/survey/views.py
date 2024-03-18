@@ -14,8 +14,8 @@ from django.shortcuts import get_object_or_404
 
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from .models import Survey, User, Question, Answer, Invitation
-from .serializers import SurveySerializer
+from .models import Survey, User, Question, ResponseToQuestion, Invitation
+from .serializers import SurveyDetailSerializer, SurveySerializer
 
 User = get_user_model()
     
@@ -23,16 +23,10 @@ User = get_user_model()
 class SurveyList(generics.ListCreateAPIView):
     queryset = Survey.objects.all()
     serializer_class = SurveySerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         serializer.save(creator=self.request.user)
-
-
-class SurveyDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Survey.objects.all()
-    serializer_class = SurveySerializer
-    permission_classes = [IsAuthenticated]
 
 
 class UserSurveyList(generics.ListAPIView):
@@ -53,7 +47,7 @@ class UserRegistrationView(APIView):
         token = User.objects.create_login_token(email)  # Generate the login token
 
         # Construct the verification URL
-        verification_url = f"http://frontend-url.com/verify/{token}"  
+        verification_url = f"http://localhost:8000/api/verify-login/{token}/"  # Replace with the desired URL
         
         message = Mail(
         from_email='surveydonkey@arslan.wtf',
@@ -75,20 +69,21 @@ class UserRegistrationView(APIView):
             print(str(e))
 
         
-        return Response({"message": "Registration email sent. Check your inbox."}, status=status.HTTP_200_OK)
+        return Response({"message": "Registration email sent. Check your inbox."}, status.HTTP_200_OK)
     
 class UserLoginView(APIView):
     def post(self, request):
         email = request.data.get('email')
         if not email:
-            return Response({"error": "Email is required"}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"error": "Email is required"}, status.HTTP_400_BAD_REQUEST)
 
         try:
             user = User.objects.get(email=email)
             token = User.objects.create_login_token(email)
 
-            login_url = f"http://frontend-url.com/login/{token}"  # Replace with frontend URL
+            login_url = f"http://localhost:8000/api/verify-login/{token}/"  # Replace with the desired URL
 
+            print(f"Preparing to send login email to: {email}")
             message = Mail(
             from_email='surveydonkey@arslan.wtf',
             to_emails=email,)
@@ -101,12 +96,13 @@ class UserLoginView(APIView):
         
             try:
                 sg = SendGridAPIClient(settings.SENDGRID_API_KEY)
+                print("Sending login email via SendGrid...")
                 response = sg.send(message)
-                print(response.status_code)
-                print(response.body)
-                print(response.headers)
+                print(f"SendGrid response status code: {response.status_code}")
+                print(f"SendGrid response body: {response.body}")
+                print(f"SendGrid response headers: {response.headers}")
             except Exception as e:
-                print(str(e))
+                print(f"Error occurred while sending login email: {str(e)}")
 
             return Response({"message": "Login email sent. Check your inbox."}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
@@ -178,7 +174,7 @@ class SendInvitations(APIView):
             invitation = Invitation.objects.create(survey=survey, email=email)
             
             # Construct the invitation URL
-            invitation_url = f"http://frontend-url.com/answer-survey/{survey.id}/{invitation.code}"
+            invitation_url = f"http://frontend-url.com/answer-survey/{survey.id}/{invitation.invitation_link}"
             message = Mail(
             from_email='surveydonkey@arslan.wtf',
             to_emails=email,)
@@ -200,8 +196,36 @@ class SendInvitations(APIView):
                 
         return Response({"message": "Invitations sent"}, status=status.HTTP_200_OK)
             
-class ProtectedView(APIView):
-    permission_classes = [IsAuthenticated]
     
-    def get(self, request):
-        return Response({"message": "You are authenticated"}, status=status.HTTP_200_OK)
+class SurveyDetailView(generics.RetrieveAPIView):
+    # permission_classes = [IsAuthenticated]
+    queryset = Survey.objects.all()
+    serializer_class = SurveyDetailSerializer
+
+    def get_object(self):
+        survey_id = self.kwargs['survey_id']
+        return get_object_or_404(Survey, id=survey_id)
+    
+class SurveyCreateView(generics.CreateAPIView):
+    # permission_classes = [IsAuthenticated]
+    queryset = Survey.objects.all()
+    serializer_class = SurveyDetailSerializer
+    
+    def perform_create(self, serializer):
+        serializer.save(creator=self.request.user)
+
+class SurveyDeleteView(generics.DestroyAPIView):
+    # permission_classes = [IsAuthenticated]
+    queryset = Survey.objects.all()
+    serializer_class = SurveyDetailSerializer
+
+    def get_object(self):
+        survey_id = self.kwargs['pk']
+        return get_object_or_404(Survey, id=survey_id)
+    
+    def destroy(self, request, *args, **kwargs):
+        survey = self.get_object()
+        if survey.creator != request.user:
+            return Response({"error": "You are not the owner of this survey"}, status=status.HTTP_403_FORBIDDEN)
+        self.perform_destroy(survey)
+        return Response(status=status.HTTP_204_NO_CONTENT)
