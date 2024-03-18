@@ -5,6 +5,7 @@ from datetime import timedelta
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.models import BaseUserManager
 from django.contrib.auth.hashers import make_password
+from django.db.models import JSONField
 
 from django.utils.crypto import get_random_string
 from django.core.exceptions import ValidationError
@@ -158,113 +159,52 @@ class User(AbstractUser):
 
 class Survey(models.Model):
     title = models.CharField(max_length=255)
-    description = models.TextField(null=True, blank=True)
+    description = models.TextField(blank=True)
     creator = models.ForeignKey(User, on_delete=models.CASCADE)
-    start_time = models.DateTimeField(default=get_current_time)
-    end_time = models.DateTimeField(null=True, blank=True)
-
-    def clean(self):
-        """
-        Validates that the end time of the survey is after the start time.
-
-        Raises:
-            ValidationError: If the end time is before or equal to the start time.
-        """
-        if self.end_time <= self.start_time:
-            raise ValidationError("End time must be after start time")
-
-    def save(self, *args, **kwargs):
-        """
-        Overrides the default save method to validate the survey before saving.
-
-        Args:
-            *args: Variable length argument list.
-            **kwargs: Arbitrary keyword arguments.
-
-        Returns:
-            None
-        """
-        self.clean()  # This will call the clean method to validate
-        super().save(*args, **kwargs)
+    start_time = models.DateTimeField()
+    end_time = models.DateTimeField()
+    created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return self.title
 
+class QuestionType(models.Model):
+    name = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.name
+    
+
 class Question(models.Model):
-    """
-    Represents a question in a survey.
-
-    Attributes:
-        survey (Survey): The survey that the question belongs to.
-        text (str): The text of the question.
-        question_type (str): The type of the question. Can be 'text', 'multiple_choice', 'checkbox', or 'star_rating'.
-
-    Methods:
-        __str__(): Returns a string representation of the Question object.
-    """
-    TEXT = 'text'
-    MULTIPLE_CHOICE = 'multiple_choice'
-    CHECKBOX = 'checkbox'
-    STAR_RATING = 'star_rating'
-    QUESTION_TYPES = [
-        (TEXT, 'Text'),
-        (MULTIPLE_CHOICE, 'Multiple Choice'),
-        (CHECKBOX, 'Checkbox'),
-        (STAR_RATING, 'Star Rating'),
-    ]
-
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='questions')
-    text = models.CharField(max_length=1024)
-    question_type = models.CharField(max_length=50, choices=QUESTION_TYPES, default=TEXT)
-
-    def __str__(self):
-        """
-        This method returns a string presenting the Question object which is the text of the question.
-        """
-        return self.text
-
-class Choice(models.Model):
-    """
-    Represents a choice for a multiple choice or checkbox question.
-
-    Attributes:
-        question (Question): The question that the choice belongs to.
-        text (str): The text of the choice.
-
-    Methods:
-        __str__(): Returns a string representation of the Choice object.
-    """
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='choices')
     text = models.CharField(max_length=255)
+    question_type = models.ForeignKey(QuestionType, on_delete=models.CASCADE)
+    choices = JSONField(null=True, blank=True)
+    order = models.PositiveIntegerField()
+    is_required = models.BooleanField(default=False)
 
     def __str__(self):
-        """
-        This method returns the text presenting the Choice object.
-        """
         return self.text
 
-
-class Answer(models.Model):
-    """
-    Represents an answer given by a user in a survey.
-
-    Attributes:
-        question (Question): The question that the answer is for.
-        text (str): The text of the answer, used for text and star rating answers.
-        selected_choice (Choice): The selected choice, used for multiple choice and checkbox answers.
-
-    Methods:
-        __str__(): Returns a string representation of the Answer object.
-    """
-    question = models.ForeignKey(Question, on_delete=models.CASCADE, related_name='answers')
-    text = models.TextField(null=True, blank=True)  # Used for text and star rating answers
-    selected_choice = models.ForeignKey(Choice, on_delete=models.CASCADE, null=True, blank=True, related_name='selected_answers')
+    
+class Invitation(models.Model):
+    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='invitations')
+    email = models.EmailField()
+    invitation_link = models.CharField(max_length=255, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    expiration_date = models.DateTimeField()
 
     def __str__(self):
-        """
-        This method returns a string presenting the Answer object in the format: 'Answer to {question text}'.
-        """
-        return f"Answer to {self.question.text}"
+        return f"Invitation for {self.email}"
+
+class ResponseToQuestion(models.Model):
+    survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='responses')
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    answer_text = models.TextField(blank=True)
+    selected_choices = JSONField(null=True, blank=True)
+
+    def __str__(self):
+        return f"Response to {self.question.text}"
 
 class Invitation(models.Model):
     """
@@ -289,12 +229,10 @@ class Invitation(models.Model):
     """
     survey = models.ForeignKey(Survey, on_delete=models.CASCADE, related_name='invitations')
     email = models.EmailField()
+    invitation_link = models.CharField(max_length=255, unique=True)
 
-    code = models.CharField(max_length=255, unique=True, blank=True)
-
-    expiration_date = models.DateTimeField(default=get_expiration_date)
-    sent_date = models.DateTimeField(default=timezone.now)
-
+    created_at = models.DateTimeField(auto_now_add=True)
+    expiration_date = models.DateTimeField()
     def save(self, *args, **kwargs):
         """
         Overrides the default save method to generate a unique code if one is not provided.
@@ -309,9 +247,9 @@ class Invitation(models.Model):
         Returns:
             None
         """
-        if not self.code:
+        if not self.invitation_link:
             # Ensure the code is unique
-            self.code = self.generate_unique_code()
+            self.invitation_link = self.generate_unique_code()
             self.expiration_date = get_expiration_date()
             
         super().save(*args, **kwargs)
@@ -329,10 +267,10 @@ class Invitation(models.Model):
         """
         for _ in range(100):
             new_code = get_random_string(length=20)
-            if not Invitation.objects.filter(code=new_code).exists():
+            if not Invitation.objects.filter(invitation_link=new_code).exists():
                 return new_code
             
-        raise Exception("Could not generate a unique code for the invitation")
+        raise Exception("Could not generate a unique invitation_link for the invitation")
     
     def __str__(self):
         """

@@ -1,0 +1,9 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+*.pyc
+__pycache__/
+db.sqlite3
+/media/
+survey/__pycache__/
+survey/migrations/
+survey_donkey/__pycache__/
+survey_donkey/migrations/

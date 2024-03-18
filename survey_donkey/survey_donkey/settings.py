@@ -27,7 +27,7 @@ SECRET_KEY = 'django-insecure-m#mkp+f&f2+dw4xn9kt6t1s0eo&el4g-nkbndpioky6hgytm9s
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -127,6 +127,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
@@ -134,4 +136,4 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'survey.User'
 
-SENDGRID_API_KEY = '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'
+SENDGRID_API_KEY = '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'
