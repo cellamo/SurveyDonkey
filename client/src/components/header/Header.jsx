@@ -18,7 +18,12 @@ const Header = () => {
         <button className="header-button" onClick={() => navigate("/BBM479")}>
           Wrong URL
         </button>
-        <button className="header-button">Option Three</button>
+        <button
+          className="header-button"
+          onClick={() => navigate("/createSurvey")}
+        >
+          Create Survey
+        </button>
       </div>
     </div>
   );

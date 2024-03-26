@@ -12,20 +12,15 @@ export function SidebarField(props) {
     className += " overlay";
   }
 
-  return(
-  <div className={className}>
-      <div>
-          <i
-              className={field.icon}
-              style={{color: 'black', fontSize: '100%'}}
-              alt={field.name}
-          />
-      <span>{field.name} </span>
+  return (
+    <div className={className}>
+      <i className={`${field.icon} sidebar-field-icon`} alt={field.name} />
+      <div className="sidebar-field-info">
+        <span className="sidebar-field-name">{field.name} </span>
+        <span className="sidebar-field-explanation">{field.explanation}</span>
       </div>
-      <div>
-          <span>{field.explanation}</span>
-      </div>
-  </div>);
+    </div>
+  );
 }
 
 function DraggableSidebarField(props) {
@@ -37,14 +32,14 @@ function DraggableSidebarField(props) {
     id: id.current,
     data: {
       field,
-      fromSidebar: true
-    }
+      fromSidebar: true,
+    },
   });
 
   return (
     <div
       ref={setNodeRef}
-      className="sidebar-field"
+      className="sidebar-field-container"
       {...listeners}
       {...attributes}
     >
@@ -58,6 +53,9 @@ export default function Sidebar(props) {
 
   return (
     <div key={fieldsRegKey} className="survey-create-sidebar">
+      <div id="survey-create-sidebar-user-email">
+        <p>b21627304@cs.hacettepe.edu.tr</p>
+      </div>
       {fields.map((f) => (
         <DraggableSidebarField key={f.type} field={f} />
       ))}

@@ -7,7 +7,7 @@ import { renderers } from "./Fields.jsx";
 function getRenderer(type) {
   if (type === "spacer") {
     return () => {
-      return <div className="spacer">spacer</div>;
+      return <div className="spacer"></div>;
     };
   }
 
@@ -34,25 +34,19 @@ export function Field(props) {
 function SortableField(props) {
   const { id, index, field } = props;
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition
-  } = useSortable({
-    id,
-    data: {
-      index,
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({
       id,
-      field
-    }
-  }
-  );
+      data: {
+        index,
+        id,
+        field,
+      },
+    });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition
+    transition,
   };
 
   return (
@@ -65,23 +59,18 @@ function SortableField(props) {
 export default function Canvas(props) {
   const { fields } = props;
 
-  const {
-    attributes,
-    listeners,
-    setNodeRef,
-    transform,
-    transition
-  } = useDroppable({
-    id: "canvas_droppable",
-    data: {
-      parent: null,
-      isContainer: true
-    }
-  });
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useDroppable({
+      id: "canvas_droppable",
+      data: {
+        parent: null,
+        isContainer: true,
+      },
+    });
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition
+    transition,
   };
 
   return (
